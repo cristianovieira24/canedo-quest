@@ -1,12 +1,14 @@
-const CACHE = 'canedo-quest-v9-rapid-1';
+const CACHE = 'canedo-quest-v9-rapid-2';
 const APP_SHELL = [
   './',
   './index.html',
   './styles.css',
   './rapid.css',
+  './visual.css',
   './app.js',
   './pwa.js',
   './rapid.js',
+  './visual-questions.js',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png'
