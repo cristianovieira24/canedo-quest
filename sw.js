@@ -9,6 +9,7 @@ const APP_SHELL = [
   './pwa.js',
   './rapid.js',
   './visual-questions.js',
+  './content-boost.js',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png'
