@@ -1,6 +1,6 @@
-const CACHE='canedo-quest-v9-rapid-4';
+const CACHE='canedo-quest-v9-rapid-5';
 const APP_SHELL=[
-  './','./index.html','./styles.css','./rapid.css','./visual.css','./app.js','./pwa.js','./rapid.js','./visual-questions.js','./content-boost.js','./manifest.webmanifest','./icon-192.png','./icon-512.png'
+  './','./index.html','./styles.css','./rapid.css','./visual.css','./app.js','./pwa.js','./rapid.js','./visual-questions.js','./content-boost.js','./lesson-visuals.css','./lesson-visuals.js','./manifest.webmanifest','./icon-192.png','./icon-512.png'
 ];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(APP_SHELL)).then(()=>self.skipWaiting()));
