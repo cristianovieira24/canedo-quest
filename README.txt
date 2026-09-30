@@ -1,15 +1,7 @@
-CANEDO QUEST v2
+Canedo Quest v7 — plataforma de reforço para o concurso de Designer Gráfico da Câmara de Senador Canedo.
 
-Abra index.html no navegador ou publique esta pasta no GitHub Pages.
+Escala atual: 106 módulos teóricos, 473 questões autorais graduadas, 340+ flashcards, 318 exercícios de revisão ativa, provas de módulo, provas por matéria, simulados completos, maratona de 60 questões, revisão por erros/pontos fracos/24h+ e lousa.
 
-Atualizações v2:
-- banco ampliado para mais de 160 questões;
-- níveis Fácil/Médio/Difícil;
-- seleção adaptativa e desafio difícil;
-- simulado final com 40 questões, 3h, navegação, marcação para revisão e correção somente no final;
-- composição final: 10 Português + 10 de conhecimentos gerais distribuídos para treino entre as quatro matérias restantes + 20 Design;
-- análise por matéria, bloco e questões difíceis;
-- lousa digital com desenho e persistência local;
-- progresso permanece no navegador e pode ser exportado/importado.
+Abra index.html ou publique a pasta no GitHub Pages. O progresso usa localStorage e pode ser exportado/importado.
 
-A composição interna de 10 questões distribuídas entre Informática, Matemática/Lógica, Direito e Município é uma decisão de treinamento do app; o edital oficial fixa o bloco de 10 questões gerais, sem detalhar nessa tabela uma quantidade obrigatória por cada uma das quatro matérias.
+PWA: esta versão pode ser instalada na tela inicial do celular. Abra pelo GitHub Pages; em navegadores compatíveis use o botão “📲 Instalar”. O aplicativo também registra um cache offline dos arquivos principais.
