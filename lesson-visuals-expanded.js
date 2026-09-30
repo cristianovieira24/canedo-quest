@@ -230,23 +230,23 @@ const P={
   ]
 };
 
-function visualFor(s,i){
+function visualFor(s,i,title){
   const p=P[s]?.[i];
   if(!p)return null;
   const t=p[0],d=p.slice(1);
-  if(t==='flow')return flow(MODULES[s][i][0],d[0],d[1]);
-  if(t==='compare')return compare(MODULES[s][i][0],d[0],d[1],d[2]);
-  if(t==='timeline')return timeline(MODULES[s][i][0],d[0],d[1]);
-  if(t==='tree')return tree(MODULES[s][i][0],d[0],d[1],d[2]);
-  if(t==='matrix')return matrix(MODULES[s][i][0],d[0],d[1],d[2]);
-  if(t==='decision')return decision(MODULES[s][i][0],d[0],d[1]);
-  if(t==='equation')return equation(MODULES[s][i][0],d[0],d[1],d[2]);
-  if(t==='grammar')return grammar(MODULES[s][i][0],d[0],d[1],d[2]);
-  if(t==='bars')return bars(MODULES[s][i][0],d[0],d[1],d[2]);
-  if(t==='mockUI')return mockUI(MODULES[s][i][0],d[0],d[1]);
-  if(t==='numberLine')return numberLine(MODULES[s][i][0],d[0],d[1]);
-  if(t==='shapes')return shapes(MODULES[s][i][0],d[0],d[1]);
-  if(t==='flowchart')return flowchart(MODULES[s][i][0],d[0],d[1]);
+  if(t==='flow')return flow(title,d[0],d[1]);
+  if(t==='compare')return compare(title,d[0],d[1],d[2]);
+  if(t==='timeline')return timeline(title,d[0],d[1]);
+  if(t==='tree')return tree(title,d[0],d[1],d[2]);
+  if(t==='matrix')return matrix(title,d[0],d[1],d[2]);
+  if(t==='decision')return decision(title,d[0],d[1]);
+  if(t==='equation')return equation(title,d[0],d[1],d[2]);
+  if(t==='grammar')return grammar(title,d[0],d[1],d[2]);
+  if(t==='bars')return bars(title,d[0],d[1],d[2]);
+  if(t==='mockUI')return mockUI(title,d[0],d[1]);
+  if(t==='numberLine')return numberLine(title,d[0],d[1]);
+  if(t==='shapes')return shapes(title,d[0],d[1]);
+  if(t==='flowchart')return flowchart(title,d[0],d[1]);
   return null;
 }
 
@@ -255,10 +255,10 @@ if(typeof oldLesson==='function'){
   window.lesson=function(s,i){
     oldLesson(s,i);
     const card=document.querySelector('.lesson-visual-card');
-    const m=window.MODULES?.[s]?.[i];
-    const v=visualFor(s,i);
+    const domTitle=document.querySelector('.lesson h1')?.textContent?.trim();
+    const title=domTitle||s+' · módulo '+(i+1);
+    const v=visualFor(s,i,title);
     if(!card||!v)return;
-    const title=m?.[0]||'Visual explicativo';
     card.innerHTML='<div class="eyebrow">🖼️ VISUAL EXPLICATIVO · '+esc(title)+'</div><h2>Veja o conceito funcionando</h2>'+v+'<p class="lesson-visual-caption">Esquema didático do assunto. Use-o para comparar, lembrar relações e depois resolver as questões.</p>';
     card.dataset.visualCoverage='expanded';
   };
