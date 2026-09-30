@@ -22,12 +22,12 @@ function ensureMobileChrome(){
     nav.className = 'bottom-nav';
     const items = [
       ['home','⌂','Início'],
-      ['study','📖','Estudar'],
-      ['train','⚡','Treinar'],
+      ['study','📖','Trilha'],
       ['review','🔁','Revisar'],
-      ['sim','🎯','Provas']
+      ['sim','🎯','Provas'],
+      ['more','☰','Mais']
     ];
-    nav.innerHTML = items.map(([id,icon,label]) => `<button class="${state.page===id?'active':''}" onclick="go('${id}')"><span class="bn-icon">${icon}</span><span>${label}</span></button>`).join('');
+    nav.innerHTML = items.map(([id,icon,label]) => id==='more' ? `<button onclick="toggleMore()"><span class="bn-icon">${icon}</span><span>${label}</span></button>` : `<button class="${state.page===id?'active':''}" onclick="go('${id}')"><span class="bn-icon">${icon}</span><span>${label}</span></button>`).join('');
     document.body.appendChild(nav);
   }
 }
