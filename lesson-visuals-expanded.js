@@ -17,7 +17,8 @@ function flow(title,labels,caption){
     h+=txt(xs[i]+110,124,x,21,'#111827','700','middle');
     if(i<2)h+=arrow(xs[i]+220,130,xs[i+1],130);
   });
-  h+=txt(45,225,caption||'Veja a relação entre as partes antes de decorar os termos.',17,'#475569');
+  if(labels.length>3)h+=txt(45,205,'Depois: '+labels.slice(3).join(' → '),18,'#111827','700');
+  h+=txt(45,245,caption||'Veja a relação entre as partes antes de decorar os termos.',17,'#475569');
   return svg(h,title+'. '+(caption||'Relação entre três etapas.'));
 }
 function compare(title,left,right,caption){
@@ -48,19 +49,19 @@ function matrix(title,cols,rows,caption){
   let h=txt(45,34,title,22,'#111827','700');
   const x0=45,y0=70,w=180,hg=44;
   cols.slice(0,4).forEach((c,i)=>h+=rect(x0+i*w,y0,w,42,'#e8f1ff','#cbd5e1',8)+txt(x0+i*w+w/2,y0+27,c,15,'#111827','700','middle'));
-  rows.slice(0,3).forEach((row,r)=>row.slice(0,4).forEach((cell,c)=>h+=rect(x0+c*w,y0+52+r*52,w,44,r%2?'#fff':'#f8fafc','#e2e8f0',8)+txt(x0+c*w+w/2,y0+80+r*52,cell,14,'#475569','400','middle')));
-  h+=txt(45,292,caption||'Tabelas visuais ajudam a comparar critérios simultaneamente.',17,'#475569');
-  return svg(h,title+'. Tabela de comparação.');
+  rows.forEach((row,r)=>row.slice(0,4).forEach((cell,c)=>h+=rect(x0+c*w,y0+52+r*52,w,44,r%2?'#fff':'#f8fafc','#e2e8f0',8)+txt(x0+c*w+w/2,y0+80+r*52,cell,14,'#475569','400','middle')));
+  const bottom=70+52+rows.length*52+25;h+=txt(45,bottom,caption||'Compare os critérios.',16,'#475569');
+  return '<svg class="lesson-svg" viewBox="0 0 820 '+(bottom+35)+'" role="img" aria-label="'+esc(title)+'. Tabela de comparação.">'+h+'</svg>';
 }
 function decision(title,steps,caption){
   let h=txt(45,34,title,22,'#111827','700');
-  steps.slice(0,4).forEach((x,i)=>{
+  steps.forEach((x,i)=>{
     const y=70+i*55; h+=rect(45,y,260,42,i===steps.length-1?'#dcfce7':'#f8fafc','#cbd5e1',10)+txt(58,y+27,x,15,'#111827','700');
-    if(i<steps.length-1)h+=arrow(305,y+21,400,y+21);
+    if(i<steps.length-1)h+=line(175,y+42,175,y+55,'#475569');
   });
-  h+=txt(410,94,'sim → avance',16,'#475569')+txt(410,140,'não → volte ao critério',16,'#475569');
-  h+=txt(45,305,caption||'A árvore de decisão mostra a ordem de raciocínio.',17,'#475569');
-  return svg(h,title+'. Fluxo de decisão.');
+  h+=txt(410,94,'Critérios em sequência',16,'#475569')+txt(410,140,'Confira cada etapa',16,'#475569');
+  const bottom=70+steps.length*55+20;h+=txt(45,bottom,caption||'Confira a sequência dos critérios.',16,'#475569');
+  return '<svg class="lesson-svg" viewBox="0 0 820 '+(bottom+35)+'" role="img" aria-label="'+esc(title)+'. Sequência de critérios.">'+h+'</svg>';
 }
 function equation(title,formula,parts,caption){
   let h=txt(45,34,title,22,'#111827','700')+rect(45,70,730,75,'#f8fafc','#cbd5e1')+txt(410,117,formula,30,'#111827','700','middle');
@@ -111,7 +112,7 @@ function flowchart(title,steps,caption){
 
 const P={
   pt:[
-    ['grammar',['Texto','pistas','contexto','inferência'],'Interpretação visual: texto → pistas → contexto → conclusão.'],
+    ['flow',['Texto','pistas','contexto','inferência'],'Interpretação visual: texto → pistas → contexto → conclusão.'],
     ['compare',[['Gênero','finalidade','público','situação'],['Tipo','organização','predomínio','estrutura']],'Gênero e tipo se relacionam, mas não são sinônimos.'],
     ['flow',['frase → oração','período','coesão','coerência'],'A construção sai da unidade local e chega ao sentido global.'],
     ['matrix',['Contexto','Forma','Público','Adequação'],[['formal','norma','institucional','alta'],['informal','coloquial','cotidiano','compatível'],['técnico','preciso','especializado','adequada']],'Escolha linguística depende de situação e finalidade.'],
@@ -131,7 +132,7 @@ const P={
     ['flow',['sequência','seleção','repetição'],'Algoritmos estruturados podem ser vistos como blocos de controle.'],
     ['tree','Sistema operacional',['arquivos','pastas','permissões','processos'],'O sistema organiza recursos e media programas e hardware.'],
     ['mockUI',['janela','barra','pasta','atalho','configuração'],'O conceito fica concreto quando você visualiza os elementos da interface.'],
-    ['tree','Linux',['/','home','etc','var'],'Diretórios formam uma árvore; permissões afetam quem pode agir.'],
+    ['tree','/ (raiz Linux)',['home','etc','var','usr'],'Diretórios formam uma árvore; permissões afetam quem pode agir.'],
     ['compare',[['CPU','processa','cálculos','controle'],['RAM/Storage','RAM: volátil','SSD: persistente','I/O: periféricos']],'Separe processamento, memória e armazenamento.'],
     ['flow',['dado original','cópia','versão','restauração'],'Backup existe para permitir recuperação, não só para “ter uma cópia”.'],
     ['mockUI',['Docs','Sheets','Slides','Drive','Gmail'],'Visualize o ecossistema como ferramentas com funções diferentes.'],
@@ -158,7 +159,7 @@ const P={
     ['timeline',[['PA','+ d'],['termos','a1,a2…'],['PG','× q'],['comparar','razão']],'PA soma uma diferença; PG multiplica por uma razão.'],
     ['tree','Escolha',['1ª opção','2ª opção','3ª opção','produto total'],'Princípio multiplicativo transforma etapas em uma árvore de possibilidades.'],
     ['flow',['espaço amostral','evento','casos favoráveis','probabilidade'],'Probabilidade é razão entre casos favoráveis e possíveis em cenários equiprováveis.'],
-    ['bars',['média','mediana','moda','dispersão'],[7,5,9,4],'Visualize o conjunto antes de escolher a medida-resumo.'],
+    ['bars',['valor 1','valor 2','valor 3','valor 4'],[2,4,4,10],'Dados ilustrativos 2, 4, 4, 10: média 5; mediana 4; moda 4.'],
     ['flowchart',['proposição','valor lógico','conectivo','conclusão'],'Sequências e lógica pedem identificação de padrão ou relação.']
   ],
   direito:[
@@ -171,8 +172,8 @@ const P={
     ['flow',['conduta','violação','responsabilização','efeito jurídico'],'Improbidade envolve conduta e consequências legais; não é sinônimo de qualquer ilegalidade.'],
     ['flowchart',['instauração','instrução','motivação','decisão'],'Processo administrativo segue etapas e exige fundamentação adequada.'],
     ['timeline',[['planejar','demanda'],['preparar','termo/estudo'],['selecionar','disputa'],['contratar','execução']],'A licitação é um processo; o planejamento vem antes da disputa.'],
-    ['matrix',['Modalidade','Uso típico','Critério','Observação'],[['Pregão','bens/serviços comuns','julgamento','ritual próprio'],['Concorrência','contratações diversas','critério','ampla utilização'],['Concurso','trabalho técnico','prêmio','resultado específico'],['Leilão','bens','maior lance','alienação']],'Visualize as modalidades pelo objeto e finalidade.'],
-    ['decision',['há competição inviável?','inexigibilidade','há hipótese legal de dispensa?','dispensa','contratação direta'],'Contratação direta não significa ausência de fundamento legal.'],
+    ['matrix',['Modalidade','Uso típico','Critério','Observação'],[['Pregão','bens/serviços comuns','julgamento','ritual próprio'],['Concorrência','contratações diversas','critério','ampla utilização'],['Concurso','trabalho técnico','prêmio','resultado específico'],['Leilão','bens','maior lance','alienação'],['Diálogo competitivo','casos complexos','fase de diálogo','art. 32']],'Visualize as modalidades pelo objeto e finalidade.'],
+    ['decision',['Competição inviável → inexigibilidade','Competição possível + hipótese legal','Hipótese de dispensa → dispensa','Sempre: instrução e fundamento'],'Contratação direta não significa ausência de fundamento legal.'],
     ['tree','CF — princípios fundamentais',['República','Federação','Estado Democrático','objetivos'],'Os primeiros artigos estruturam fundamentos e objetivos da República.'],
     ['matrix',['Direito','Garantia','Exemplo','Proteção'],[['vida','liberdade','igualdade','segurança'],['propriedade','imagem','intimidade','devido processo'],['liberdades','expressão','crença','associação']],'O art. 5º reúne direitos e garantias fundamentais com proteção específica.'],
     ['tree','CF — arts. 6–13',['sociais','trabalho','nacionalidade','direitos correlatos'],'Agrupe os artigos por tema para memorizar melhor.'],
@@ -235,7 +236,7 @@ function visualFor(s,i,title){
   if(!p)return null;
   const t=p[0],d=p.slice(1);
   if(t==='flow')return flow(title,d[0],d[1]);
-  if(t==='compare')return compare(title,d[0],d[1],d[2]);
+  if(t==='compare')return compare(title,d[0][0],d[0][1],d[1]);
   if(t==='timeline')return timeline(title,d[0],d[1]);
   if(t==='tree')return tree(title,d[0],d[1],d[2]);
   if(t==='matrix')return matrix(title,d[0],d[1],d[2]);
@@ -254,11 +255,11 @@ const oldLesson=window.lesson;
 if(typeof oldLesson==='function'){
   window.lesson=function(s,i){
     oldLesson(s,i);
-    const card=document.querySelector('.lesson-visual-card');
+    let card=document.querySelector('.lesson-visual-card');
     const domTitle=document.querySelector('.lesson h1')?.textContent?.trim();
     const title=domTitle||s+' · módulo '+(i+1);
     const v=visualFor(s,i,title);
-    if(!card||!v)return;
+    if(!v)return;if(!card){const body=document.querySelector('.lesson-body');if(!body)return;card=document.createElement('section');card.className='lesson-visual-card';body.before(card);}
     card.innerHTML='<div class="eyebrow">🖼️ VISUAL EXPLICATIVO · '+esc(title)+'</div><h2>Veja o conceito funcionando</h2>'+v+'<p class="lesson-visual-caption">Esquema didático do assunto. Use-o para comparar, lembrar relações e depois resolver as questões.</p>';
     card.dataset.visualCoverage='expanded';
   };
