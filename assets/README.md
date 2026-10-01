@@ -1,0 +1,7 @@
+# Teaching photography
+
+`oficina.jpg` is a generated editorial photograph used in fictional poster comparisons and raster-resolution exercises. It does not document a real municipal event. The photograph was generated with the built-in image generation tool, then resized and encoded as JPEG for offline use. The poster typography and instructional diagrams are rendered by the application; factual labels are not baked into the generated photograph.
+
+Prompt:
+
+> Create one photorealistic editorial photograph for a fictional municipal culture workshop, to be used as the photographic base of educational poster design examples. Wide landscape 3:2. Close view of a pair of adult hands screen printing a vivid deep ultramarine abstract botanical print onto cream paper on a real wooden art workshop table. A small orange ink pot and squeegee, paper fibers and honest natural texture, soft daylight from left, sophisticated documentary photography with restrained cobalt blue, warm orange, cream palette. Hands must be anatomically natural, no face needed. Composition has hands and print on right two thirds, darker uncluttered wooden table on left for later added typography. This is a photograph only: absolutely no text, letters, logos, numbers, borders, watermarks, layout labels, collage, or infographic. Intended as a real photographic asset in lessons demonstrating typography, hierarchy and raster resolution; do not include any diagram.

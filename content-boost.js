@@ -49,5 +49,5 @@ EXTRA_FLASHCARDS.push(
 {front:'Qual lei é o Estatuto dos Servidores de Senador Canedo?',back:'Lei Municipal nº 1.488/2010.',hint:'Número local importante.'},
 {front:'Quando Senador Canedo foi instalado?',back:'1º de junho de 1989.',hint:'Emancipação e instalação não são a mesma data.'}
 );
-render();
+// Initial render is deferred until the entire question bank is loaded.
 })();

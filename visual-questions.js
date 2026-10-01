@@ -13,5 +13,5 @@ const V=[
 QUESTIONS.push(...V);
 const baseRender=window.renderQuiz;
 window.renderQuiz=function(){baseRender();const z=state.quiz;if(!z||!z.qs)return;const q=QUESTIONS.find(x=>x.uid===z.qs[z.idx]);if(q&&q.visual){const box=document.querySelector('.q-text');if(box&&!document.querySelector('.visual-question'))box.insertAdjacentHTML('afterend','<div class="visual-question">'+q.visual+'</div>');}};
-render();
+// Initial render is deferred until the entire question bank is loaded.
 })();
