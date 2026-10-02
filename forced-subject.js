@@ -126,7 +126,7 @@ function home(){
     '<h2 class="cq-section-title">Qual matéria você vai estudar agora?</h2>'+
     '<section class="cq-choice-grid">'+c.map(function(s,i){
       var ms=mods(s),count=ms.reduce(function(n,m){return n+getQuestions(s,m.i).length;},0);
-      return '<article class="cq-choice"><span class="cq-num">0'+(i+1)+'</span><div class="cq-subject">'+(I[s]||'📘')+' '+esc(subjectName(s))+'</div><h2>'+esc(subjectName(s))+'</h2><p>'+ms.length+' módulos com aulas de conteúdo, exemplos e provas. Você só recebe novas matérias depois de fechar esta.</p><div><b>'+ms.length+'</b> módulos <b>'+count+'</b> questões no banco</div><button class="cq-btn primary" onclick="CQForced.choose(\\''+s+'\\')">Começar esta matéria →</button></article>';
+      return '<article class="cq-choice"><span class="cq-num">0'+(i+1)+'</span><div class="cq-subject">'+(I[s]||'📘')+' '+esc(subjectName(s))+'</div><h2>'+esc(subjectName(s))+'</h2><p>'+ms.length+' módulos com aulas de conteúdo, exemplos e provas. Você só recebe novas matérias depois de fechar esta.</p><div><b>'+ms.length+'</b> módulos <b>'+count+'</b> questões no banco</div><button class="cq-btn primary" onclick="CQForced.choose(\''+s+'\')">Começar esta matéria →</button></article>';
     }).join('')+'</section>'+
     '<section class="cq-science"><b>📖 ESTUDAR ≠ RESPONDER</b><p>Cada módulo tem uma etapa separada de leitura: conceitos, exemplos, diferenças, pegadinhas e pontos que caem em prova. Só depois o botão da prova é liberado.</p></section>',
     'home'
@@ -379,7 +379,7 @@ function reviews(){
   var html=Object.keys(groups).map(function(s){
     return '<section class="cq-review-group"><h2>'+(I[s]||'📘')+' '+esc(subjectName(s))+'</h2>'+groups[s].map(function(m){
       var r=p.reviews[m.key],due=r.next<=Date.now();
-      return '<article><div><b>'+esc(m.title)+'</b><small>'+esc(m.desc)+'</small><span>'+(r.reviews||0)+' revisão(ões) · '+(due?'devida agora':'programada')+'</span></div><button class="cq-btn '+(due?'primary':'')+'" onclick="CQForced.revisit(\\''+m.key+'\\')">'+(due?'Revisar agora':'Revisitar aula')+'</button></article>';
+      return '<article><div><b>'+esc(m.title)+'</b><small>'+esc(m.desc)+'</small><span>'+(r.reviews||0)+' revisão(ões) · '+(due?'devida agora':'programada')+'</span></div><button class="cq-btn '+(due?'primary':'')+'" onclick="CQForced.revisit(\''+m.key+'\')">'+(due?'Revisar agora':'Revisitar aula')+'</button></article>';
     }).join('')+'</section>';
   }).join('');
   page(
@@ -398,7 +398,7 @@ function errors(){
   var arr=badIds.map(function(id){return (QUESTIONS||[]).find(function(q){return q.uid===id;});}).filter(Boolean);
   page(
     '<section class="cq-hero compact"><div><span>CADERNO DE ERROS</span><h1>Questões que mostraram onde sua recuperação falhou.</h1><p>Um erro não some quando você vê a alternativa correta. Use esta área para reler a aula e tentar de novo.</p></div><strong class="cq-big">'+arr.length+'<small>erros ativos</small></strong></section>'+
-    (arr.length?'<section class="cq-error-list">'+arr.map(function(q){return '<article><div><b>'+esc(subjectName(q.s))+'</b><h3>'+esc(q.q)+'</h3><small>'+esc(q.e||'')+'</small></div><button class="cq-btn primary" onclick="CQForced.error(\\''+q.uid+'\\')">Estudar e refazer</button></article>';}).join('')+'</section>':'<section class="cq-card"><h2>✅ Nenhum erro pendente.</h2><p>Quando uma prova revelar um erro, ele aparece aqui.</p></section>'),
+    (arr.length?'<section class="cq-error-list">'+arr.map(function(q){return '<article><div><b>'+esc(subjectName(q.s))+'</b><h3>'+esc(q.q)+'</h3><small>'+esc(q.e||'')+'</small></div><button class="cq-btn primary" onclick="CQForced.error(\''+q.uid+'\')">Estudar e refazer</button></article>';}).join('')+'</section>':'<section class="cq-card"><h2>✅ Nenhum erro pendente.</h2><p>Quando uma prova revelar um erro, ele aparece aqui.</p></section>'),
     'errors'
   );
 }
