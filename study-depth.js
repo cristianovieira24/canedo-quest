@@ -143,6 +143,7 @@ function inject(s,i){
   if(body)body.after(h); else lesson.prepend(h);
 }
 
+window.CQStudyDepth=D;
 const prev=window.lesson;
 if(typeof prev==='function'){
   window.lesson=function(s,i){
