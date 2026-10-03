@@ -23,10 +23,10 @@ function ensureMobileChrome(){
     const items = [
       ['home','⌂','Início'],
       ['study','📖','Trilha'],
-      ['review','🔁','Revisar'],
-      ['sim','🎯','Provas'],
-      ['more','☰','Mais']
+      ['review','🔁','Revisar']
     ];
+    if (typeof routeAllDone === 'function' && routeAllDone()) items.push(['sim','🎯','Provas']);
+    items.push(['more','☰','Mais']);
     nav.innerHTML = items.map(([id,icon,label]) => id==='more' ? `<button onclick="toggleMore()"><span class="bn-icon">${icon}</span><span>${label}</span></button>` : `<button class="${state.page===id?'active':''}" onclick="go('${id}')"><span class="bn-icon">${icon}</span><span>${label}</span></button>`).join('');
     document.body.appendChild(nav);
   }
