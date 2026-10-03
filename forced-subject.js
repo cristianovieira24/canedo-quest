@@ -163,20 +163,22 @@ function render(){
   else home();
 }
 function study(c){
-  var a=c.a,m=c.m,sections=parseSections(m.lesson),min=(m.lesson&&m.lesson.minutes)||Math.max(8,sections.length*3), allRead=a.studyDone;
+  var a=c.a,m=c.m,sections=parseSections(m.lesson),key=m.s+':'+m.i,depth=window.CQStudyDepth&&window.CQStudyDepth[m.s]&&window.CQStudyDepth[m.s][m.i],min=(m.lesson&&m.lesson.minutes)||Math.max(8,sections.length*3);
   var contents=sections.map(function(x,i){
+    if(/^Conceito central$/i.test(x.title)&&depth)return '';
     return '<article class="cq-study-block" id="cq-block-'+i+'"><div class="cq-block-kicker">PARTE '+String(i+1).padStart(2,'0')+'</div><h2>'+esc(x.title)+'</h2>'+paragraphs(x.body)+'</article>';
   }).join('');
-  var takeaway=(m.lesson&&m.lesson.check||[]).filter(function(x){return x&&!/^Consigo resolver/.test(x);});
+  var focus=[];
+  if(depth&&Array.isArray(depth[2]))focus=depth[2].filter(Boolean);
+  else focus=(m.lesson&&m.lesson.check||[]).filter(function(x){return x&&!/^Consigo (resolver|explicar|dar|diferenciar)/i.test(x);});
+  var depthHtml=depth?'<section class="cq-study-depth"><div class="cq-study-depth-kicker">📚 LEITURA PRINCIPAL</div><h2>Conteúdo-base para estudar antes da prova</h2><div class="cq-study-depth-text">'+paragraphs(String(depth[1]||''))+'</div>'+(focus.length?'<div class="cq-study-depth-focus"><strong>🎯 Pontos que você precisa dominar</strong><ul>'+focus.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>':'')+'</section>':'';
   page(
     sessionHeader('ESTUDO','Aula do módulo')+
-    '<section class="cq-study-heading"><div><span>📖 ETAPA 1 · ESTUDAR</span><h1>'+esc(m.title)+'</h1><p>'+esc(m.desc)+'</p></div><div class="cq-study-meta"><b>'+sections.length+'</b><small>partes da aula</small><b>'+min+' min</b><small>tempo de estudo sugerido</small></div></section>'+
-    '<div class="cq-study-grid"><aside class="cq-study-index"><strong>Nesta aula</strong>'+sections.map(function(x,i){return '<a href="#cq-block-'+i+'"><span>'+String(i+1).padStart(2,'0')+'</span>'+esc(x.title)+'</a>';}).join('')+
-      '<div class="cq-study-index-note">Leia as partes na ordem. A prova só aparece depois de você concluir esta etapa.</div></aside>'+
-      '<div class="cq-study-paper">'+contents+
-        (takeaway.length?'<section class="cq-study-callout"><strong>🎯 Foco para a prova</strong><ul>'+takeaway.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></section>':'')+
-        '<section class="cq-study-callout warning"><strong>⚠️ Pegadinha principal</strong><p>'+esc(m.lesson.trap||'Revise a diferença central antes da prova.')+'</p></section>'+
-        '<section class="cq-study-finish"><div><span>ESTUDO CONCLUÍDO?</span><h2>Agora é hora de provar que você consegue aplicar.</h2><p>Não é uma pergunta escondida no meio da aula. Esta é uma etapa separada: primeiro estudar, depois fazer a prova.</p></div><button class="cq-btn primary" onclick="CQForced.finishStudy()">Concluir estudo e abrir prova →</button></section>'+
+    '<section class="cq-study-heading"><div><span>📖 ETAPA 1 · ESTUDAR</span><h1>'+esc(m.title)+'</h1><p>'+esc(m.desc)+'</p></div><div class="cq-study-meta"><b>'+sections.filter(function(x){return !(/^Conceito central$/i.test(x.title)&&depth)}).length+'</b><small>partes de apoio</small><b>'+min+' min</b><small>tempo de estudo sugerido</small></div></section>'+
+    '<div class="cq-study-grid"><aside class="cq-study-index"><strong>Nesta aula</strong><a href="#cq-depth"><span>01</span>Leitura principal</a>'+sections.map(function(x,i){if(/^Conceito central$/i.test(x.title)&&depth)return '';return '<a href="#cq-block-'+i+'"><span>'+String((depth?i+2:i+1)).padStart(2,'0')+'</span>'+esc(x.title)+'</a>';}).join('')+'<div class="cq-study-index-note">Leia primeiro o conteúdo. A prova só aparece depois que esta etapa for concluída.</div></aside>'+
+      '<div class="cq-study-paper" id="cq-depth">'+depthHtml+contents+
+        '<section class="cq-study-callout warning"><strong>⚠️ Armadilha principal</strong><p>'+esc(m.lesson.trap||'Revise a diferença central antes da prova.')+'</p></section>'+
+        '<section class="cq-study-finish"><div><span>ESTUDO CONCLUÍDO?</span><h2>Agora demonstre que você consegue aplicar.</h2><p>Você já teve acesso ao conteúdo. A próxima etapa mede recuperação e aplicação sem consulta.</p></div><button class="cq-btn primary" onclick="CQForced.finishStudy()">Concluir estudo e abrir prova →</button></section>'+
       '</div></div>',
     'home'
   );
