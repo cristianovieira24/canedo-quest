@@ -3,7 +3,7 @@
   'use strict';
   window.addEventListener('load',function(){
     if(!('serviceWorker' in navigator)) return;
-    navigator.serviceWorker.register('./sw.js?v=20',{updateViaCache:'none'}).then(function(reg){
+    navigator.serviceWorker.register('./sw.js?v=21',{updateViaCache:'none'}).then(function(reg){
       return reg.update();
     }).catch(function(){});
   });

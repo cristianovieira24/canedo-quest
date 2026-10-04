@@ -164,21 +164,22 @@ function render(){
 }
 function study(c){
   var a=c.a,m=c.m,sections=parseSections(m.lesson),key=m.s+':'+m.i,depth=window.CQStudyDepth&&window.CQStudyDepth[m.s]&&window.CQStudyDepth[m.s][m.i],min=(m.lesson&&m.lesson.minutes)||Math.max(8,sections.length*3);
+  var foundation=window.CQFoundationUI&&CQFoundationUI.render(m.s,m.i);
   var contents=sections.map(function(x,i){
-    if(/^Conceito central$/i.test(x.title)&&depth)return '';
+    if(foundation&&m.s==='pt'||/^Conceito central$/i.test(x.title)&&depth)return '';
     return '<article class="cq-study-block" id="cq-block-'+i+'"><div class="cq-block-kicker">PARTE '+String(i+1).padStart(2,'0')+'</div><h2>'+esc(x.title)+'</h2>'+paragraphs(x.body)+'</article>';
   }).join('');
   var focus=[];
   if(depth&&Array.isArray(depth[2]))focus=depth[2].filter(Boolean);
   else focus=(m.lesson&&m.lesson.check||[]).filter(function(x){return x&&!/^Consigo (resolver|explicar|dar|diferenciar)/i.test(x);});
-  var depthHtml=depth?'<section class="cq-study-depth"><div class="cq-study-depth-kicker">📚 LEITURA PRINCIPAL</div><h2>Conteúdo-base para estudar antes da prova</h2><div class="cq-study-depth-text">'+paragraphs(String(depth[1]||''))+'</div>'+(focus.length?'<div class="cq-study-depth-focus"><strong>🎯 Pontos que você precisa dominar</strong><ul>'+focus.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>':'')+'</section>':'';
+  var depthHtml=foundation|| (depth?'<section class="cq-study-depth"><div class="cq-study-depth-kicker">📚 LEITURA PRINCIPAL</div><h2>Conteúdo-base para estudar antes da prova</h2><div class="cq-study-depth-text">'+paragraphs(String(depth[1]||''))+'</div>'+(focus.length?'<div class="cq-study-depth-focus"><strong>🎯 Pontos que você precisa dominar</strong><ul>'+focus.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>':'')+'</section>':'');
   page(
     sessionHeader('ESTUDO','Aula do módulo')+
-    '<section class="cq-study-heading"><div><span>📖 ETAPA 1 · ESTUDAR</span><h1>'+esc(m.title)+'</h1><p>'+esc(m.desc)+'</p></div><div class="cq-study-meta"><b>'+sections.filter(function(x){return !(/^Conceito central$/i.test(x.title)&&depth)}).length+'</b><small>partes de apoio</small><b>'+min+' min</b><small>tempo de estudo sugerido</small></div></section>'+
-    '<div class="cq-study-grid"><aside class="cq-study-index"><strong>Nesta aula</strong><a href="#cq-depth"><span>01</span>Leitura principal</a>'+sections.map(function(x,i){if(/^Conceito central$/i.test(x.title)&&depth)return '';return '<a href="#cq-block-'+i+'"><span>'+String((depth?i+2:i+1)).padStart(2,'0')+'</span>'+esc(x.title)+'</a>';}).join('')+'<div class="cq-study-index-note">Leia primeiro o conteúdo. A prova só aparece depois que esta etapa for concluída.</div></aside>'+
-      '<div class="cq-study-paper" id="cq-depth">'+depthHtml+contents+
+    '<section class="cq-study-heading"><div><span>📖 ETAPA 1 · ESTUDAR</span><h1>'+esc(m.title)+'</h1><p>'+esc(m.desc)+'</p></div><div class="cq-study-meta"><b>'+(foundation?(window.CQFoundations?.[m.s]?.[m.i]?.parts.length||1):sections.filter(function(x){return !(/^Conceito central$/i.test(x.title)&&depth)}).length)+'</b><small>partes de estudo</small><b>'+min+' min</b><small>tempo de estudo sugerido</small></div></section>'+
+    '<div class="cq-study-grid"><aside class="cq-study-index"><strong>Nesta aula</strong><a href="#cq-depth"><span>01</span>Conceitos e exemplos</a>'+sections.map(function(x,i){if(foundation&&m.s==='pt'||/^Conceito central$/i.test(x.title)&&depth)return '';return '<a href="#cq-block-'+i+'"><span>'+String((depth?i+2:i+1)).padStart(2,'0')+'</span>'+esc(x.title)+'</a>';}).join('')+'<div class="cq-study-index-note">Leia primeiro o conteúdo. A prova só aparece depois que esta etapa for concluída.</div></aside>'+
+      '<div class="cq-study-paper" id="cq-depth">'+depthHtml+contents+(m.s==='pt'?CQFoundationUI.lookup():'')+
         '<section class="cq-study-callout warning"><strong>⚠️ Armadilha principal</strong><p>'+esc(m.lesson.trap||'Revise a diferença central antes da prova.')+'</p></section>'+
-        '<section class="cq-study-finish"><div><span>ESTUDO CONCLUÍDO?</span><h2>Agora demonstre que você consegue aplicar.</h2><p>Você já teve acesso ao conteúdo. A próxima etapa mede recuperação e aplicação sem consulta.</p></div><button class="cq-btn primary" onclick="CQForced.finishStudy()">Concluir estudo e abrir prova →</button></section>'+
+        '<section class="cq-study-finish"><div><span>ESTUDO CONCLUÍDO?</span><h2>Agora demonstre que você consegue aplicar.</h2><p>Consegue explicar os conceitos e reconhecer os exemplos? Comece a prática quando estiver pronto. Se faltar uma base, você poderá voltar à aula.</p></div><button class="cq-btn primary" onclick="CQForced.finishStudy()">Entendi os conceitos · começar prática →</button></section>'+
       '</div></div>',
     'home'
   );
@@ -206,13 +207,13 @@ function moduleTest(c,retryMode){
   var ans=a.answers[q.uid],pos=a.qid+1,total=ids.length;
   page(
     sessionHeader(retryMode?'REFORÇO':'PROVA DO MÓDULO','Prova')+
-    '<section class="cq-test-head"><span>📝 ETAPA 2 · '+(retryMode?'ERROS DA PROVA':'PROVA DO MÓDULO')+'</span><h1>'+esc(c.m.title)+'</h1><p>'+ (retryMode?'Você errou esta questão antes. Ela volta até o conceito ficar seguro.':'Agora sim: sem voltar para a aula enquanto responde. A explicação aparece depois da tentativa.')+'</p><div class="cq-test-count">Questão '+pos+' de '+total+'</div></section>'+
+    '<section class="cq-test-head"><span>📝 ETAPA 2 · '+(retryMode?'ERROS DA PROVA':'PROVA DO MÓDULO')+'</span><h1>'+esc(c.m.title)+'</h1><p>'+ (retryMode?'Você errou esta questão antes. Ela volta até o conceito ficar seguro.':'Tente aplicar o que aprendeu. Se faltar uma definição, volte à aula e retome esta mesma questão.')+'</p><div class="cq-test-count">Questão '+pos+' de '+total+'</div></section>'+
     '<section class="cq-test-card"><div class="cq-question-label">'+(retryMode?'REFORÇO':'PROVA')+'</div><h2>'+esc(q.q)+'</h2><div class="cq-options">'+q.o.map(function(opt,i){
       var cls=ans?(i===q.a?'ok':i===ans.choice?'bad':''):'';
       return '<button class="cq-option '+cls+'" '+(ans?'disabled':'')+' onclick="CQForced.answerModule('+i+')"><span>'+String.fromCharCode(65+i)+'</span><b>'+esc(opt)+'</b></button>';
     }).join('')+'</div>'+
     (ans?'<div class="cq-feedback '+(ans.correct?'good':'bad')+'"><b>'+(ans.correct?'Correto.':'Incorreto — veja o raciocínio.')+'</b><p>'+esc(q.e||'Revise o conceito e a justificativa da resposta.')+'</p>'+(ans.correct?'':'<small>Esta questão entra no reforço antes de você concluir o módulo.</small>')+'</div><button class="cq-btn primary cq-next" onclick="CQForced.nextModuleQuestion()">'+(pos===total?'Concluir esta etapa':'Próxima questão')+' →</button>':'')+
-    '</section>',
+    (c.m.s==='pt'&&ans?CQFoundationUI.lookup():'')+'<div class="cq-relearn"><button class="cq-btn" onclick="CQForced.relearn()">Ainda não entendi · voltar à aula</button></div></section>',
     'home'
   );
 }
@@ -272,7 +273,7 @@ function subjectTest(c,retryMode){
       return '<button class="cq-option '+cls+'" '+(ans?'disabled':'')+' onclick="CQForced.answerSubject('+i+')"><span>'+String.fromCharCode(65+i)+'</span><b>'+esc(opt)+'</b></button>';
     }).join('')+'</div>'+
     (ans?'<div class="cq-feedback '+(ans.correct?'good':'bad')+'"><b>'+(ans.correct?'Correto.':'Incorreto.')+'</b><p>'+esc(q.e||'Veja a explicação da questão.')+'</p></div><button class="cq-btn primary cq-next" onclick="CQForced.nextSubjectQuestion()">'+(pos===total?'Concluir prova':'Próxima questão')+' →</button>':'')+
-    '</section>',
+    (a.s==='pt'&&ans?CQFoundationUI.lookup():'')+'</section>',
     'home'
   );
 }
@@ -313,7 +314,7 @@ function reviewStudy(c){
   page(
     sessionHeader('REVISÃO','Revisão da aula')+
     '<section class="cq-study-heading"><div><span>🧠 REVISÃO · LEIA NOVAMENTE</span><h1>'+esc(m.title)+'</h1><p>Revisar também é estudar. Leia o material, relembre os exemplos e só então vá para a prova de revisão.</p></div><div class="cq-study-meta"><b>'+sections.length+'</b><small>partes para reler</small></div></section>'+
-    '<div class="cq-study-paper cq-review-paper">'+sections.map(function(x,i){return '<article class="cq-study-block"><div class="cq-block-kicker">REVISÃO '+String(i+1).padStart(2,'0')+'</div><h2>'+esc(x.title)+'</h2>'+paragraphs(x.body)+'</article>';}).join('')+
+    '<div class="cq-study-paper cq-review-paper">'+(window.CQFoundationUI&&CQFoundationUI.render(m.s,m.i)||sections.map(function(x,i){return '<article class="cq-study-block"><div class="cq-block-kicker">REVISÃO '+String(i+1).padStart(2,'0')+'</div><h2>'+esc(x.title)+'</h2>'+paragraphs(x.body)+'</article>';}).join(''))+(m.s==='pt'?CQFoundationUI.lookup():'')+
     '<section class="cq-study-callout warning"><strong>⚠️ Armadilha</strong><p>'+esc(m.lesson.trap||'Revise a diferença central.')+'</p></section>'+
     '<section class="cq-study-finish"><div><span>AGORA RECUPERE</span><h2>A leitura terminou. A revisão ativa começa agora.</h2></div><button class="cq-btn primary" onclick="CQForced.beginReviewTest()">Abrir prova de revisão →</button></section></div>',
     'reviews'
@@ -339,13 +340,13 @@ function reviewTest(c){
   var ans=a.answers[q.uid],pos=a.qid+1,total=ids.length;
   page(
     sessionHeader(a.phase==='reviewRetry'?'REFORÇO':'REVISÃO','Recuperação')+
-    '<section class="cq-test-head"><span>🧠 '+(a.phase==='reviewRetry'?'ERRO DA REVISÃO':'PROVA DE REVISÃO')+'</span><h1>'+esc(c.m.title)+'</h1><p>Sem consultar o texto durante a tentativa. A explicação aparece depois da resposta.</p><div class="cq-test-count">Questão '+pos+' de '+total+'</div></section>'+
+    '<section class="cq-test-head"><span>🧠 '+(a.phase==='reviewRetry'?'ERRO DA REVISÃO':'PROVA DE REVISÃO')+'</span><h1>'+esc(c.m.title)+'</h1><p>Tente recuperar sem consultar. Se faltar uma base, releia a explicação e retome esta questão.</p><div class="cq-test-count">Questão '+pos+' de '+total+'</div></section>'+
     '<section class="cq-test-card"><h2>'+esc(q.q)+'</h2><div class="cq-options">'+q.o.map(function(opt,i){
       var cls=ans?(i===q.a?'ok':i===ans.choice?'bad':''):'';
       return '<button class="cq-option '+cls+'" '+(ans?'disabled':'')+' onclick="CQForced.answerReview('+i+')"><span>'+String.fromCharCode(65+i)+'</span><b>'+esc(opt)+'</b></button>';
     }).join('')+'</div>'+
     (ans?'<div class="cq-feedback '+(ans.correct?'good':'bad')+'"><b>'+(ans.correct?'Recuperou.':'Ainda precisa reforçar.')+'</b><p>'+esc(q.e||'Revise a explicação.')+'</p></div><button class="cq-btn primary cq-next" onclick="CQForced.nextReviewQuestion()">'+(pos===total?'Concluir revisão':'Próxima')+' →</button>':'')+
-    '</section>',
+    (a.s==='pt'&&ans?CQFoundationUI.lookup():'')+'<div class="cq-relearn"><button class="cq-btn" onclick="CQForced.relearn()">Voltar à explicação</button></div></section>',
     'reviews'
   );
 }
@@ -418,9 +419,15 @@ function method(){
     'method'
   );
 }
+function relearn(){
+  var c=currentModule();if(!c)return;
+  study(c);
+  var finish=document.querySelector('.cq-study-finish');
+  if(finish)finish.innerHTML='<div><span>RELEITURA</span><h2>Volte ao ponto que ficou confuso.</h2><p>Sua questão e suas respostas continuam salvas.</p></div><button class="cq-btn primary" onclick="CQForced.resume()">Retomar a questão →</button>';
+}
 function resume(){render();}
 function leave(){
-  path().active=null;save();home();
+  save();home();
 }
 function boot(){
   try{if(state.quiz)state.quiz=null;}catch(e){}
@@ -429,7 +436,7 @@ function boot(){
   if(path().active)render();else home();
 }
 window.CQForced={
-  home:home,reviews:reviews,errors:errors,method:method,choose:choose,resume:resume,leave:leave,
+  relearn:relearn,home:home,reviews:reviews,errors:errors,method:method,choose:choose,resume:resume,leave:leave,
   finishStudy:finishStudy,answerModule:answerModule,nextModuleQuestion:nextModuleQuestion,
   answerSubject:answerSubject,nextSubjectQuestion:nextSubjectQuestion,
   startDue:startDue,revisit:revisit,error:error,

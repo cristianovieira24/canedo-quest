@@ -5,11 +5,16 @@ const element=()=>({innerHTML:'',textContent:'',style:{},classList:{add(){},remo
 const saved=new Map(),intervals=[];
 const ctx={console,Date,Math,setInterval:f=>(intervals.push(f),intervals.length),clearInterval(){},setTimeout:()=>0,clearTimeout(){},localStorage:{getItem:k=>saved.get(k)||null,setItem:(k,v)=>saved.set(k,v)},document:{body:element(),querySelector:s=>s==='#content'?content:s==='#toast'?element():null,querySelectorAll:()=>[],addEventListener(){}},navigator:{userAgent:''},addEventListener(){}};
 ctx.window=ctx;vm.createContext(ctx);
-for(const file of ['state-validation.js','app.js','visual-questions.js','content-boost.js','curriculum.js','module-map.js','rapid.js']){
+for(const file of ['state-validation.js','app.js','visual-questions.js','content-boost.js','curriculum.js','module-map.js','foundations.js','rapid.js']){
  let code=fs.readFileSync(path.join(root,file),'utf8').replace(/\nrender\(\);?/g,'\n');vm.runInContext(code,ctx,{filename:file});
 }
 const run=code=>vm.runInContext(code,ctx),plain=v=>JSON.parse(JSON.stringify(v));
 const bank=plain(run('QUESTIONS')),mods=plain(run('MODULES')),lessons=plain(run('LESSONS'));
+
+const foundations=plain(run('CQFoundations.pt'));
+assert.equal(foundations.length,mods.pt.length);
+for(const lesson of foundations){assert.ok(lesson.parts.length>=3);assert.equal(lesson.worked.length,2);for(const [term,definition] of lesson.parts){assert.ok(term.length>5);assert.ok(definition.length>120);}}
+for(const [module,terms] of [[6,['Substantivo','Adjetivo','Advérbio','Pronome','Prefixo','Sufixo']],[7,['Sujeito','Objeto direto','Objeto indireto','predicativo','Vocativo']],[14,['Ditongo','Tritongo','Hiato','Dígrafo']]]){const text=JSON.stringify(foundations[module]).toLowerCase();for(const term of terms)assert.ok(text.includes(term.toLowerCase()),term);}
 assert.equal(bank.length,526);assert.equal(new Set(bank.map(q=>q.uid)).size,bank.length);
 for(const q of bank){assert.equal(q.o.length,4,q.uid);assert.equal(new Set(q.o.map(v=>v.normalize('NFC').trim().toLowerCase())).size,4,q.uid);assert.ok(Number.isInteger(q.a)&&q.a>=0&&q.a<4,q.uid);assert.ok(q.e.length,q.uid);assert.ok(q.modules.length,q.uid);for(const i of q.modules)assert.ok(mods[q.s][i],q.uid);}
 for(const [s,arr] of Object.entries(mods))assert.equal(arr.length,lessons[s].length,s);
@@ -55,6 +60,6 @@ assert.equal(handlers.length,4);for(const h of handlers)assert.doesNotThrow(()=>
 run('state=clone(DEFAULT)');for(let i=0;i<1000;i++){const q=plain(run('CQRapidTest.getQuestion()'));assert.equal(q.o.length,4);assert.ok(!q.o.some(o=>o.startsWith('Outra opção')));assert.ok(q.o[q.a]);}
 assert.equal(run("CQRapidTest.makeQuestion({answer:'1/2',wrong:['2/4','1/3','3/4']})"),null);
 // Every referenced shell asset exists; cleanup is scoped to this app.
-const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');for(const match of sw.matchAll(/'\.\/([^']+)'/g))assert.ok(fs.existsSync(path.join(root,match[1])),match[1]);assert.ok(sw.includes("k.startsWith('canedo-quest-')"));
+const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');for(const match of sw.matchAll(/'\.\/([^']+)'/g))assert.ok(fs.existsSync(path.join(root,match[1].split('?')[0])),match[1]);assert.ok(sw.includes("k.startsWith('canedo-quest-')"));
 console.log('PASS: 526 questões, 113 aulas, gabaritos corrigidos, vínculos explícitos, pontuação única, revisão, simulados, importação, opções e 1000 questões rápidas.');
 for(const [s,arr] of Object.entries(mods)){const pools=arr.map((m,i)=>({title:m[0],questions:bank.filter(q=>q.s===s&&q.modules.includes(i)).length}));console.log(s,JSON.stringify(pools));}
